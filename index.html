@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lost&amp;Found+</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      padding: 1rem;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 1.5rem;
+      padding: 2rem 1.75rem;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+      text-align: center;
+    }
+
+    .logo {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #667eea;
+      letter-spacing: -0.5px;
+      margin-bottom: 0.25rem;
+    }
+
+    .logo span {
+      color: #764ba2;
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: #888;
+      margin-bottom: 1.75rem;
+    }
+
+    .divider {
+      height: 1px;
+      background: #f0f0f0;
+      margin: 1.25rem 0;
+    }
+
+    .owner-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #aaa;
+      margin-bottom: 1rem;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: #f7f8ff;
+      border-radius: 0.75rem;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.6rem;
+      text-align: left;
+    }
+
+    .info-icon {
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .info-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .info-key {
+      font-size: 0.7rem;
+      color: #aaa;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-value {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #2d2d2d;
+    }
+
+    .btn {
+      margin-top: 1.5rem;
+      width: 100%;
+      padding: 0.9rem 1rem;
+      border: none;
+      border-radius: 0.9rem;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.45);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+    }
+
+    .confirmation {
+      display: none;
+      margin-top: 1.25rem;
+      background: #edfaf3;
+      border: 1.5px solid #6fcf97;
+      border-radius: 0.9rem;
+      padding: 1rem;
+      color: #27ae60;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .confirmation.show {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .error-state {
+      color: #e74c3c;
+      font-weight: 600;
+      margin-top: 1rem;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="card" id="card">
+    <div class="logo">Lost&amp;Found<span>+</span></div>
+    <p class="subtitle">Danke fürs Scannen des QR-Codes.</p>
+    <div class="divider"></div>
+    <div id="content"></div>
+  </div>
+
+  <script>
+    const database = {
+      "123": { name: "Lucas",  klasse: "2B", abgabe: "Schulsekretariat"   },
+      "124": { name: "Janis",  klasse: "3A", abgabe: "Fundkiste Eingang"  },
+      "125": { name: "Emma",   klasse: "1C", abgabe: "Lehrerzimmer"       },
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const userId = params.get("user");
+    const user   = database[userId];
+    const content = document.getElementById("content");
+
+    if (!user) {
+      content.innerHTML = `
+        <p class="error-state">
+          ❌ Kein Benutzer mit der ID <strong>${userId ?? "–"}</strong> gefunden.
+        </p>`;
+    } else {
+      content.innerHTML = `
+        <p class="owner-label">Besitzer</p>
+
+        <div class="info-row">
+          <span class="info-icon">👤</span>
+          <div class="info-text">
+            <span class="info-key">Name</span>
+            <span class="info-value">${user.name}</span>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <span class="info-icon">🏫</span>
+          <div class="info-text">
+            <span class="info-key">Klasse</span>
+            <span class="info-value">${user.klasse}</span>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <span class="info-icon">📍</span>
+          <div class="info-text">
+            <span class="info-key">Abgabeort</span>
+            <span class="info-value">${user.abgabe}</span>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" id="foundBtn">
+          📦 Ich habe diesen Gegenstand gefunden
+        </button>
+
+        <div class="confirmation" id="confirmation">
+          ✅ Vielen Dank! Bitte gib den Gegenstand im <strong>${user.abgabe}</strong> ab.
+        </div>`;
+
+      document.getElementById("foundBtn").addEventListener("click", () => {
+        document.getElementById("confirmation").classList.add("show");
+        document.getElementById("foundBtn").disabled = true;
+        document.getElementById("foundBtn").style.opacity = "0.5";
+      });
+    }
+  </script>
+</body>
+</html>

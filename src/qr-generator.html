@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lost&amp;Found+ · QR Generator</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      padding: 2rem 1rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+
+    header h1 span { color: #d4b8ff; }
+
+    header p {
+      color: rgba(255,255,255,0.75);
+      margin-top: 0.4rem;
+      font-size: 0.95rem;
+    }
+
+    /* ── Base-URL input ── */
+    .url-bar {
+      max-width: 600px;
+      margin: 0 auto 2rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .url-bar input {
+      flex: 1;
+      padding: 0.7rem 1rem;
+      border-radius: 0.75rem;
+      border: none;
+      font-size: 0.9rem;
+      outline: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .url-bar button {
+      padding: 0.7rem 1.2rem;
+      border-radius: 0.75rem;
+      border: none;
+      background: #fff;
+      color: #667eea;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transition: opacity 0.15s;
+    }
+
+    .url-bar button:hover { opacity: 0.85; }
+
+    /* ── Grid ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.25rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 1.25rem;
+      padding: 1.5rem 1rem 1.25rem;
+      text-align: center;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.18);
+    }
+
+    .card-name {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #2d2d2d;
+      margin-bottom: 0.2rem;
+    }
+
+    .card-meta {
+      font-size: 0.78rem;
+      color: #999;
+      margin-bottom: 1rem;
+    }
+
+    .qr-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    /* qrcode.js renders a canvas or img inside this div */
+    .qr-wrap > * { border-radius: 0.5rem; }
+
+    .card-url {
+      font-size: 0.65rem;
+      color: #bbb;
+      word-break: break-all;
+      margin-bottom: 1rem;
+    }
+
+    .btn-dl {
+      display: inline-block;
+      padding: 0.55rem 1.1rem;
+      border-radius: 0.65rem;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.82rem;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+
+    .btn-dl:hover { opacity: 0.85; }
+
+    /* ── Print styles ── */
+    .print-btn-wrap {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn-print {
+      padding: 0.7rem 1.75rem;
+      border-radius: 0.75rem;
+      border: 2px solid rgba(255,255,255,0.8);
+      background: transparent;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-print:hover { background: rgba(255,255,255,0.15); }
+
+    /* ── Add-user form ── */
+    .add-form {
+      max-width: 600px;
+      margin: 0 auto 2rem;
+      background: rgba(255,255,255,0.12);
+      border-radius: 1.25rem;
+      padding: 1.25rem 1.5rem;
+      backdrop-filter: blur(6px);
+    }
+
+    .add-form h2 {
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .form-row.full { grid-template-columns: 1fr; }
+
+    .add-form input {
+      width: 100%;
+      padding: 0.65rem 0.9rem;
+      border-radius: 0.65rem;
+      border: none;
+      font-size: 0.88rem;
+      outline: none;
+      background: rgba(255,255,255,0.92);
+      color: #2d2d2d;
+    }
+
+    .add-form input::placeholder { color: #aaa; }
+
+    .form-actions {
+      display: flex;
+      gap: 0.6rem;
+      margin-top: 0.75rem;
+    }
+
+    .btn-add {
+      flex: 1;
+      padding: 0.7rem;
+      border-radius: 0.75rem;
+      border: none;
+      background: #fff;
+      color: #667eea;
+      font-weight: 800;
+      font-size: 0.92rem;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+
+    .btn-add:hover { opacity: 0.85; }
+
+    .btn-clear {
+      padding: 0.7rem 1rem;
+      border-radius: 0.75rem;
+      border: 2px solid rgba(255,255,255,0.5);
+      background: transparent;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-clear:hover { background: rgba(255,255,255,0.1); }
+
+    .form-error {
+      color: #ffb3b3;
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
+      min-height: 1rem;
+    }
+
+    /* ── Delete button on card ── */
+    .btn-delete {
+      display: inline-block;
+      margin-left: 0.4rem;
+      padding: 0.55rem 0.8rem;
+      border-radius: 0.65rem;
+      background: #fff0f0;
+      color: #e74c3c;
+      font-weight: 700;
+      font-size: 0.82rem;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.15s;
+    }
+
+    .btn-delete:hover { opacity: 0.75; }
+
+    .card-actions { display: flex; justify-content: center; gap: 0; flex-wrap: wrap; }
+
+    @media print {
+      body { background: #fff; padding: 0; }
+      header, .url-bar, .add-form, .print-btn-wrap, .card-url, .card-actions { display: none; }
+      .grid { gap: 1rem; }
+      .card { box-shadow: none; border: 1px solid #ddd; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Lost&amp;Found<span>+</span></h1>
+    <p>QR-Code Generator · alle Benutzer auf einen Blick</p>
+  </header>
+
+  <div class="url-bar">
+    <input type="text" id="baseUrl" placeholder="Basis-URL (z. B. https://deine-seite.de/index.html)" />
+    <button onclick="regenerate()">Aktualisieren</button>
+  </div>
+
+  <!-- ── Neuen User hinzufügen ── -->
+  <div class="add-form">
+    <h2>➕ Neuen Benutzer hinzufügen</h2>
+    <div class="form-row">
+      <input type="text"   id="f-name"   placeholder="Name (z. B. Sophie)" maxlength="40" />
+      <input type="text"   id="f-klasse" placeholder="Klasse (z. B. 2A)"   maxlength="10" />
+    </div>
+    <div class="form-row full">
+      <input type="text"   id="f-abgabe" placeholder="Abgabeort (z. B. Schulsekretariat)" maxlength="60" />
+    </div>
+    <div class="form-row">
+      <input type="text"   id="f-id"     placeholder="ID (leer = automatisch)" maxlength="10" />
+    </div>
+    <div class="form-actions">
+      <button class="btn-add"   onclick="addUser()">Benutzer hinzufügen &amp; QR erstellen</button>
+      <button class="btn-clear" onclick="clearAll()">Alle löschen</button>
+    </div>
+    <div class="form-error" id="form-error"></div>
+  </div>
+
+  <div class="print-btn-wrap">
+    <button class="btn-print" onclick="window.print()">🖨️ Alle drucken</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <script>
+    // ── Datenbank (wird im localStorage gespeichert) ─────────────────
+    const DEFAULTS = {
+      "123": { name: "Lucas", klasse: "2B", abgabe: "Schulsekretariat"  },
+      "124": { name: "Janis", klasse: "3A", abgabe: "Fundkiste Eingang" },
+      "125": { name: "Emma",  klasse: "1C", abgabe: "Lehrerzimmer"      },
+    };
+
+    function loadDB() {
+      try {
+        const saved = localStorage.getItem("laf_database");
+        return saved ? JSON.parse(saved) : { ...DEFAULTS };
+      } catch { return { ...DEFAULTS }; }
+    }
+
+    function saveDB() {
+      localStorage.setItem("laf_database", JSON.stringify(database));
+    }
+
+    let database = loadDB();
+    // ────────────────────────────────────────────────────────────────
+
+    function guessBaseUrl() {
+      const loc = window.location.href.replace("qr-generator.html", "index.html");
+      return loc.split("?")[0];
+    }
+
+    function buildUrl(baseUrl, id) {
+      return `${baseUrl.trim().replace(/\?.*$/, "")}?user=${id}`;
+    }
+
+    function nextId() {
+      const ids = Object.keys(database).map(Number).filter(n => !isNaN(n));
+      return String(ids.length ? Math.max(...ids) + 1 : 100);
+    }
+
+    function setError(msg) {
+      document.getElementById("form-error").textContent = msg;
+    }
+
+    function addUser() {
+      const name   = document.getElementById("f-name").value.trim();
+      const klasse = document.getElementById("f-klasse").value.trim();
+      const abgabe = document.getElementById("f-abgabe").value.trim();
+      let   id     = document.getElementById("f-id").value.trim();
+
+      if (!name)   return setError("Bitte einen Namen eingeben.");
+      if (!klasse) return setError("Bitte eine Klasse eingeben.");
+      if (!abgabe) return setError("Bitte einen Abgabeort eingeben.");
+
+      id = id || nextId();
+
+      if (database[id]) return setError(`ID „${id}" ist bereits vergeben.`);
+
+      setError("");
+      database[id] = { name, klasse, abgabe };
+      saveDB();
+
+      // Clear inputs
+      ["f-name","f-klasse","f-abgabe","f-id"].forEach(i =>
+        document.getElementById(i).value = ""
+      );
+
+      renderCards(document.getElementById("baseUrl").value || guessBaseUrl());
+
+      // Scroll new card into view
+      setTimeout(() => {
+        document.getElementById(`card-${id}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 100);
+    }
+
+    function deleteUser(id) {
+      if (!confirm(`Benutzer „${database[id]?.name}" (ID ${id}) wirklich löschen?`)) return;
+      delete database[id];
+      saveDB();
+      renderCards(document.getElementById("baseUrl").value || guessBaseUrl());
+    }
+
+    function clearAll() {
+      if (!confirm("Alle Benutzer löschen und Standarddaten wiederherstellen?")) return;
+      database = { ...DEFAULTS };
+      saveDB();
+      renderCards(document.getElementById("baseUrl").value || guessBaseUrl());
+    }
+
+    function downloadQR(canvasOrImg, filename) {
+      const dataUrl = canvasOrImg.tagName === "CANVAS"
+        ? canvasOrImg.toDataURL("image/png")
+        : canvasOrImg.src;
+      const a = document.createElement("a");
+      a.href = dataUrl;
+      a.download = filename;
+      a.click();
+    }
+
+    function regenerate() {
+      const baseUrl = document.getElementById("baseUrl").value || guessBaseUrl();
+      document.getElementById("baseUrl").value = baseUrl;
+      renderCards(baseUrl);
+    }
+
+    function renderCards(baseUrl) {
+      const grid = document.getElementById("grid");
+      grid.innerHTML = "";
+
+      Object.entries(database).forEach(([id, user]) => {
+        const url = buildUrl(baseUrl, id);
+
+        const card = document.createElement("div");
+        card.className = "card";
+        card.id = `card-${id}`;
+        card.innerHTML = `
+          <div class="card-name">${user.name}</div>
+          <div class="card-meta">Klasse ${user.klasse} &nbsp;·&nbsp; ID ${id}</div>
+          <div class="qr-wrap" id="qr-${id}"></div>
+          <div class="card-url">${url}</div>
+          <div class="card-actions">
+            <button class="btn-dl"     id="dl-${id}">⬇ PNG</button>
+            <button class="btn-delete" id="del-${id}">🗑</button>
+          </div>
+        `;
+        grid.appendChild(card);
+
+        new QRCode(document.getElementById(`qr-${id}`), {
+          text: url,
+          width: 160,
+          height: 160,
+          colorDark: "#2d2d2d",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.M,
+        });
+
+        document.getElementById(`dl-${id}`).addEventListener("click", () => {
+          const el = document.getElementById(`qr-${id}`).querySelector("canvas,img");
+          downloadQR(el, `qr-${user.name.toLowerCase()}-${id}.png`);
+        });
+
+        document.getElementById(`del-${id}`).addEventListener("click", () => deleteUser(id));
+      });
+    }
+
+    // Eingabe mit Enter bestätigen
+    ["f-name","f-klasse","f-abgabe","f-id"].forEach(id => {
+      document.getElementById(id).addEventListener("keydown", e => {
+        if (e.key === "Enter") addUser();
+      });
+    });
+
+    // Init
+    document.getElementById("baseUrl").value = guessBaseUrl();
+    renderCards(guessBaseUrl());
+  </script>
+</body>
+</html>
