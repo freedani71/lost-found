@@ -138,8 +138,10 @@
       body { background: #fff; padding: 0; margin: 0; }
       header, .url-bar, .add-form, .action-bar, .card-url, .card-actions, .card-name { display: none; }
       #lock-screen { display: none; }
-      /* Avery 96 x 50.8 mm, 2x5 = 10 pro Blatt */
-      /* Ränder: oben 21.2mm, links 7.2mm, kein Abstand zwischen Labels */
+      /* Avery L4744 · 96 x 50.8 mm · 2x5 = 10 pro Blatt          */
+      /* ── Hier anpassen falls Labels nicht passen ──────────────── */
+      /* oben/unten: (297 - 5×50.8) / 2 = 21.5mm                   */
+      /* links/rechts: (210 - 2×96) / 2 = 9mm                      */
       .grid {
         display: grid;
         grid-template-columns: repeat(2, 96mm);
