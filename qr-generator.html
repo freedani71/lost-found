@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lost&amp;Found+ · QR Generator</title>
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -221,7 +222,7 @@
   </div>
 
   <div class="action-bar">
-    <button class="btn-print" onclick="window.print()">🖨️ Alle drucken</button>
+    <button class="btn-print" onclick="generatePDF()">📄 PDF erstellen (Avery L4744)</button>
   </div>
 
   <div style="max-width:900px; margin:0 auto 1.5rem; display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
@@ -484,6 +485,58 @@
     document.getElementById("f-neue-schule").addEventListener("keydown", e => {
       if (e.key === "Enter") window.saveNewSchule();
     });
+
+    window.generatePDF = function() {
+      const { jsPDF } = window.jspdf;
+
+      // Avery L4744 Masse in mm
+      const marginTop  = 20;
+      const marginLeft = 9;
+      const labelW     = 96;
+      const labelH     = 50.8;
+      const cols       = 2;
+      const qrSize     = 36;
+
+      const filterSchule = document.getElementById("filter-schule").value;
+      const entries = Object.entries(database).filter(([, user]) =>
+        !filterSchule || user.schule === filterSchule
+      );
+
+      if (!entries.length) { showToast("Keine Einträge zum Drucken."); return; }
+
+      const doc = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
+
+      entries.forEach(([id, user], i) => {
+        const pageIndex = i % 10;
+
+        if (i > 0 && pageIndex === 0) doc.addPage();
+
+        const col = pageIndex % cols;
+        const row = Math.floor(pageIndex / cols);
+
+        const x = marginLeft + col * labelW;
+        const y = marginTop  + row * labelH;
+
+        // QR-Code zentriert auf dem Label
+        const qrX = x + (labelW - qrSize) / 2;
+        const qrY = y + (labelH - qrSize) / 2 - 3;
+
+        const canvas = document.getElementById(`qr-${id}`)?.querySelector("canvas,img");
+        if (canvas) {
+          const dataUrl = canvas.tagName === "CANVAS" ? canvas.toDataURL("image/png") : canvas.src;
+          doc.addImage(dataUrl, "PNG", qrX, qrY, qrSize, qrSize);
+        }
+
+        // Klasse & ID unter dem QR-Code
+        doc.setFontSize(7);
+        doc.setTextColor(100);
+        doc.text(`Klasse ${user.klasse}  ·  ID ${id}`, x + labelW / 2, qrY + qrSize + 4, { align: "center" });
+      });
+
+      const schuleName = filterSchule ? `-${filterSchule.replace(/\s+/g, "_")}` : "";
+      doc.save(`qr-labels${schuleName}.pdf`);
+      showToast("✅ PDF wird heruntergeladen…");
+    };
   </script>
 </body>
 </html>
