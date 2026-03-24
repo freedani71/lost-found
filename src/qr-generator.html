@@ -134,11 +134,30 @@
     .toast.show { opacity: 1; }
 
     @media print {
-      body { background: #fff; padding: 0; }
-      header, .url-bar, .add-form, .action-bar, .card-url, .card-actions { display: none; }
+      body { background: #fff; padding: 0; margin: 0; }
+      header, .url-bar, .add-form, .action-bar, .card-url, .card-actions, .card-name { display: none; }
       #lock-screen { display: none; }
-      .grid { gap: 1rem; }
-      .card { box-shadow: none; border: 1px solid #ddd; break-inside: avoid; }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 4mm;
+        padding: 5mm;
+        width: 200mm;
+        margin: 0 auto;
+      }
+      .card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+        break-inside: avoid;
+        padding: 3mm;
+        height: 54mm;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .card-meta { font-size: 0.7rem; margin-bottom: 2mm; }
+      .qr-wrap canvas, .qr-wrap img { width: 35mm !important; height: 35mm !important; }
     }
   </style>
 </head>
