@@ -174,6 +174,7 @@
       <input type="text" id="f-abgabe" placeholder="Abgabeort (z. B. Schulsekretariat)" maxlength="60" />
     </div>
     <div class="form-row">
+      <input type="text" id="f-schule" placeholder="Schule (z. B. Kantonsschule Zug)" maxlength="60" />
       <input type="text" id="f-id"     placeholder="ID (leer = automatisch)" maxlength="10" />
     </div>
     <div class="form-actions">
@@ -207,10 +208,10 @@
       const r = await fetch(`${SUPABASE_URL}/rest/v1/users?select=*`, { headers: HEADERS });
       return r.json();
     }
-    async function dbInsert(id, name, klasse, abgabe) {
+    async function dbInsert(id, name, klasse, abgabe, schule) {
       await fetch(`${SUPABASE_URL}/rest/v1/users`, {
         method: "POST", headers: HEADERS,
-        body: JSON.stringify({ id, name, klasse, abgabe }),
+        body: JSON.stringify({ id, name, klasse, abgabe, schule }),
       });
     }
     async function dbDelete(id) {
@@ -282,7 +283,7 @@
       document.getElementById("baseUrl").value = guessBaseUrl();
       const rows = await dbGetAll();
       database = {};
-      rows.forEach(r => { database[r.id] = { name: r.name, klasse: r.klasse, abgabe: r.abgabe }; });
+      rows.forEach(r => { database[r.id] = { name: r.name, klasse: r.klasse, abgabe: r.abgabe, schule: r.schule || "" }; });
       renderCards(currentBaseUrl());
     }
 
@@ -290,19 +291,21 @@
       const name   = document.getElementById("f-name").value.trim();
       const klasse = document.getElementById("f-klasse").value.trim();
       const abgabe = document.getElementById("f-abgabe").value.trim();
+      const schule = document.getElementById("f-schule").value.trim();
       let   id     = document.getElementById("f-id").value.trim();
 
       if (!name)   return setError("Bitte einen Namen eingeben.");
       if (!klasse) return setError("Bitte eine Klasse eingeben.");
       if (!abgabe) return setError("Bitte einen Abgabeort eingeben.");
+      if (!schule) return setError("Bitte eine Schule eingeben.");
 
       id = id || nextId();
       if (database[id]) return setError(`ID „${id}" ist bereits vergeben.`);
 
       setError("");
-      await dbInsert(id, name, klasse, abgabe);
-      database[id] = { name, klasse, abgabe };
-      ["f-name","f-klasse","f-abgabe","f-id"].forEach(i =>
+      await dbInsert(id, name, klasse, abgabe, schule);
+      database[id] = { name, klasse, abgabe, schule };
+      ["f-name","f-klasse","f-abgabe","f-schule","f-id"].forEach(i =>
         document.getElementById(i).value = ""
       );
       renderCards(currentBaseUrl());
@@ -345,7 +348,7 @@
         card.id = `card-${id}`;
         card.innerHTML = `
           <div class="card-name">${user.name}</div>
-          <div class="card-meta">Klasse ${user.klasse} &nbsp;·&nbsp; ID ${id}</div>
+          <div class="card-meta">Klasse ${user.klasse} &nbsp;·&nbsp; ID ${id}${user.schule ? ` &nbsp;·&nbsp; ${user.schule}` : ""}</div>
           <div class="qr-wrap" id="qr-${id}"></div>
           <div class="card-url">${url}</div>
           <div class="card-actions">
@@ -369,7 +372,7 @@
     };
 
     // Enter-Taste im Formular
-    ["f-name","f-klasse","f-abgabe","f-id"].forEach(id => {
+    ["f-name","f-klasse","f-abgabe","f-schule","f-id"].forEach(id => {
       document.getElementById(id).addEventListener("keydown", e => {
         if (e.key === "Enter") window.addUser();
       });
