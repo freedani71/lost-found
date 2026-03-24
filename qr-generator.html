@@ -200,6 +200,13 @@
     <button class="btn-print" onclick="window.print()">🖨️ Alle drucken</button>
   </div>
 
+  <div style="max-width:900px; margin:0 auto 1.5rem; display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
+    <select id="filter-schule" onchange="renderCards(currentBaseUrl())" style="padding:0.6rem 1rem; border-radius:0.75rem; border:none; font-size:0.9rem; outline:none; background:#fff; color:#2d2d2d; box-shadow:0 4px 12px rgba(0,0,0,0.15); cursor:pointer;">
+      <option value="">Alle Schulen</option>
+    </select>
+    <span id="filter-count" style="color:rgba(255,255,255,0.8); font-size:0.88rem;"></span>
+  </div>
+
   <div class="grid" id="grid"></div>
   <div class="toast" id="toast"></div>
 
@@ -388,11 +395,33 @@
       a.href = dataUrl; a.download = filename; a.click();
     }
 
+    function populateFilterDropdown() {
+      const sel = document.getElementById("filter-schule");
+      const current = sel.value;
+      sel.innerHTML = '<option value="">Alle Schulen</option>';
+      const schulen = [...new Set(Object.values(database).map(u => u.schule).filter(Boolean))].sort();
+      schulen.forEach(s => {
+        const opt = document.createElement("option");
+        opt.value = s; opt.textContent = s;
+        sel.appendChild(opt);
+      });
+      if (current) sel.value = current;
+    }
+
     window.renderCards = function(baseUrl) {
       const grid = document.getElementById("grid");
       grid.innerHTML = "";
+      populateFilterDropdown();
 
-      Object.entries(database).forEach(([id, user]) => {
+      const filterSchule = document.getElementById("filter-schule").value;
+      const entries = Object.entries(database).filter(([, user]) =>
+        !filterSchule || user.schule === filterSchule
+      );
+
+      document.getElementById("filter-count").textContent =
+        filterSchule ? `${entries.length} Schüler` : "";
+
+      entries.forEach(([id, user]) => {
         const url  = buildUrl(baseUrl, id);
         const card = document.createElement("div");
         card.className = "card";
