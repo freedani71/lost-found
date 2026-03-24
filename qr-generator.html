@@ -138,16 +138,13 @@
       body { background: #fff; padding: 0; margin: 0; }
       header, .url-bar, .add-form, .action-bar, .card-url, .card-actions, .card-name { display: none; }
       #lock-screen { display: none; }
-      /* Avery L4744 · 96 x 50.8 mm · 2x5 = 10 pro Blatt          */
-      /* ── Hier anpassen falls Labels nicht passen ──────────────── */
-      /* oben/unten: (297 - 5×50.8) / 2 = 21.5mm                   */
-      /* links/rechts: (210 - 2×96) / 2 = 9mm                      */
+      /* Avery L4744 · 96 x 50.8 mm · 2x5 = 10 pro Blatt */
       .grid {
         display: grid;
         grid-template-columns: repeat(2, 96mm);
         grid-template-rows: repeat(5, 50.8mm);
         gap: 0;
-        padding: 21.5mm 9mm 21.5mm 9mm;
+        padding: 20mm 9mm 23mm 9mm;
         margin: 0;
         width: auto;
       }
