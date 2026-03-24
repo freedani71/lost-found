@@ -15,244 +15,128 @@
       padding: 2rem 1rem;
     }
 
-    header {
-      text-align: center;
-      margin-bottom: 2rem;
+    /* ── Lock screen ── */
+    #lock-screen {
+      position: fixed; inset: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex; align-items: center; justify-content: center; z-index: 9999;
     }
-
-    header h1 {
-      font-size: 2rem;
-      font-weight: 800;
-      color: #fff;
-      letter-spacing: -0.5px;
+    .lock-card {
+      background: #fff; border-radius: 1.5rem; padding: 2.5rem 2rem;
+      max-width: 360px; width: 90%; text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
     }
-
-    header h1 span { color: #d4b8ff; }
-
-    header p {
-      color: rgba(255,255,255,0.75);
-      margin-top: 0.4rem;
-      font-size: 0.95rem;
+    .lock-card h2 { font-size: 1.5rem; font-weight: 800; color: #667eea; margin-bottom: 0.25rem; }
+    .lock-card p  { color: #999; font-size: 0.88rem; margin-bottom: 1.5rem; }
+    .lock-card input {
+      width: 100%; padding: 0.8rem 1rem; border-radius: 0.75rem;
+      border: 2px solid #e0e0e0; font-size: 1rem; outline: none;
+      text-align: center; letter-spacing: 2px; margin-bottom: 0.75rem; transition: border-color 0.15s;
     }
-
-    /* ── Base-URL input ── */
-    .url-bar {
-      max-width: 600px;
-      margin: 0 auto 2rem;
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .url-bar input {
-      flex: 1;
-      padding: 0.7rem 1rem;
-      border-radius: 0.75rem;
-      border: none;
-      font-size: 0.9rem;
-      outline: none;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-
-    .url-bar button {
-      padding: 0.7rem 1.2rem;
-      border-radius: 0.75rem;
-      border: none;
-      background: #fff;
-      color: #667eea;
-      font-weight: 700;
-      cursor: pointer;
-      font-size: 0.9rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      transition: opacity 0.15s;
-    }
-
-    .url-bar button:hover { opacity: 0.85; }
-
-    /* ── Grid ── */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 1.25rem;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .card {
-      background: #fff;
-      border-radius: 1.25rem;
-      padding: 1.5rem 1rem 1.25rem;
-      text-align: center;
-      box-shadow: 0 12px 35px rgba(0,0,0,0.18);
-    }
-
-    .card-name {
-      font-size: 1.1rem;
-      font-weight: 800;
-      color: #2d2d2d;
-      margin-bottom: 0.2rem;
-    }
-
-    .card-meta {
-      font-size: 0.78rem;
-      color: #999;
-      margin-bottom: 1rem;
-    }
-
-    .qr-wrap {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 1rem;
-    }
-
-    /* qrcode.js renders a canvas or img inside this div */
-    .qr-wrap > * { border-radius: 0.5rem; }
-
-    .card-url {
-      font-size: 0.65rem;
-      color: #bbb;
-      word-break: break-all;
-      margin-bottom: 1rem;
-    }
-
-    .btn-dl {
-      display: inline-block;
-      padding: 0.55rem 1.1rem;
-      border-radius: 0.65rem;
+    .lock-card input:focus { border-color: #667eea; }
+    .lock-card input.shake { animation: shake 0.35s ease; border-color: #e74c3c; }
+    .lock-card button {
+      width: 100%; padding: 0.8rem; border-radius: 0.75rem; border: none;
       background: linear-gradient(135deg, #667eea, #764ba2);
-      color: #fff;
-      font-weight: 700;
-      font-size: 0.82rem;
-      cursor: pointer;
-      border: none;
-      text-decoration: none;
-      transition: opacity 0.15s;
+      color: #fff; font-weight: 800; font-size: 1rem; cursor: pointer;
+    }
+    .lock-error { color: #e74c3c; font-size: 0.82rem; margin-top: 0.6rem; min-height: 1rem; }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25%      { transform: translateX(-8px); }
+      75%      { transform: translateX(8px); }
     }
 
-    .btn-dl:hover { opacity: 0.85; }
+    header { text-align: center; margin-bottom: 2rem; }
+    header h1 { font-size: 2rem; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+    header h1 span { color: #d4b8ff; }
+    header p { color: rgba(255,255,255,0.75); margin-top: 0.4rem; font-size: 0.95rem; }
 
-    /* ── Print styles ── */
-    .print-btn-wrap {
-      text-align: center;
-      margin-bottom: 1.5rem;
+    /* ── URL bar ── */
+    .url-bar { max-width: 600px; margin: 0 auto 2rem; display: flex; gap: 0.5rem; }
+    .url-bar input {
+      flex: 1; padding: 0.7rem 1rem; border-radius: 0.75rem; border: none;
+      font-size: 0.9rem; outline: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .url-bar button {
+      padding: 0.7rem 1.2rem; border-radius: 0.75rem; border: none;
+      background: #fff; color: #667eea; font-weight: 700; cursor: pointer;
+      font-size: 0.9rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
 
-    .btn-print {
-      padding: 0.7rem 1.75rem;
-      border-radius: 0.75rem;
-      border: 2px solid rgba(255,255,255,0.8);
-      background: transparent;
-      color: #fff;
-      font-weight: 700;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-
-    .btn-print:hover { background: rgba(255,255,255,0.15); }
-
-    /* ── Add-user form ── */
+    /* ── Add form ── */
     .add-form {
-      max-width: 600px;
-      margin: 0 auto 2rem;
-      background: rgba(255,255,255,0.12);
-      border-radius: 1.25rem;
-      padding: 1.25rem 1.5rem;
-      backdrop-filter: blur(6px);
+      max-width: 600px; margin: 0 auto 2rem;
+      background: rgba(255,255,255,0.12); border-radius: 1.25rem;
+      padding: 1.25rem 1.5rem; backdrop-filter: blur(6px);
     }
-
-    .add-form h2 {
-      color: #fff;
-      font-size: 1rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.6rem;
-      margin-bottom: 0.6rem;
-    }
-
+    .add-form h2 { color: #fff; font-size: 1rem; font-weight: 700; margin-bottom: 1rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.6rem; }
     .form-row.full { grid-template-columns: 1fr; }
-
     .add-form input {
-      width: 100%;
-      padding: 0.65rem 0.9rem;
-      border-radius: 0.65rem;
-      border: none;
-      font-size: 0.88rem;
-      outline: none;
-      background: rgba(255,255,255,0.92);
-      color: #2d2d2d;
+      width: 100%; padding: 0.65rem 0.9rem; border-radius: 0.65rem; border: none;
+      font-size: 0.88rem; outline: none; background: rgba(255,255,255,0.92); color: #2d2d2d;
     }
-
     .add-form input::placeholder { color: #aaa; }
-
-    .form-actions {
-      display: flex;
-      gap: 0.6rem;
-      margin-top: 0.75rem;
-    }
-
+    .form-actions { display: flex; gap: 0.6rem; margin-top: 0.75rem; }
     .btn-add {
-      flex: 1;
-      padding: 0.7rem;
-      border-radius: 0.75rem;
-      border: none;
-      background: #fff;
-      color: #667eea;
-      font-weight: 800;
-      font-size: 0.92rem;
-      cursor: pointer;
-      transition: opacity 0.15s;
+      flex: 1; padding: 0.7rem; border-radius: 0.75rem; border: none;
+      background: #fff; color: #667eea; font-weight: 800; font-size: 0.92rem; cursor: pointer;
+    }
+    .btn-secondary {
+      padding: 0.7rem 1rem; border-radius: 0.75rem;
+      border: 2px solid rgba(255,255,255,0.5); background: transparent;
+      color: #fff; font-weight: 700; font-size: 0.88rem; cursor: pointer;
+    }
+    .form-error { color: #ffb3b3; font-size: 0.8rem; margin-top: 0.5rem; min-height: 1rem; }
+
+    /* ── Action bar ── */
+    .action-bar { text-align: center; margin-bottom: 1.5rem; }
+    .btn-print {
+      padding: 0.7rem 1.75rem; border-radius: 0.75rem;
+      border: 2px solid rgba(255,255,255,0.8); background: transparent;
+      color: #fff; font-weight: 700; font-size: 0.95rem; cursor: pointer;
     }
 
-    .btn-add:hover { opacity: 0.85; }
-
-    .btn-clear {
-      padding: 0.7rem 1rem;
-      border-radius: 0.75rem;
-      border: 2px solid rgba(255,255,255,0.5);
-      background: transparent;
-      color: #fff;
-      font-weight: 700;
-      font-size: 0.88rem;
-      cursor: pointer;
-      transition: background 0.15s;
+    /* ── Cards ── */
+    .grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.25rem; max-width: 900px; margin: 0 auto;
     }
-
-    .btn-clear:hover { background: rgba(255,255,255,0.1); }
-
-    .form-error {
-      color: #ffb3b3;
-      font-size: 0.8rem;
-      margin-top: 0.5rem;
-      min-height: 1rem;
+    .card {
+      background: #fff; border-radius: 1.25rem; padding: 1.5rem 1rem 1.25rem;
+      text-align: center; box-shadow: 0 12px 35px rgba(0,0,0,0.18);
     }
-
-    /* ── Delete button on card ── */
+    .card-name { font-size: 1.1rem; font-weight: 800; color: #2d2d2d; margin-bottom: 0.2rem; }
+    .card-meta { font-size: 0.78rem; color: #999; margin-bottom: 1rem; }
+    .qr-wrap { display: flex; justify-content: center; margin-bottom: 1rem; }
+    .qr-wrap > * { border-radius: 0.5rem; }
+    .card-url { font-size: 0.65rem; color: #bbb; word-break: break-all; margin-bottom: 1rem; }
+    .card-actions { display: flex; justify-content: center; gap: 0.4rem; flex-wrap: wrap; }
+    .btn-dl {
+      padding: 0.55rem 1rem; border-radius: 0.65rem;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff; font-weight: 700; font-size: 0.82rem; cursor: pointer; border: none;
+    }
     .btn-delete {
-      display: inline-block;
-      margin-left: 0.4rem;
-      padding: 0.55rem 0.8rem;
-      border-radius: 0.65rem;
-      background: #fff0f0;
-      color: #e74c3c;
-      font-weight: 700;
-      font-size: 0.82rem;
-      cursor: pointer;
-      border: none;
-      transition: opacity 0.15s;
+      padding: 0.55rem 0.8rem; border-radius: 0.65rem;
+      background: #fff0f0; color: #e74c3c; font-weight: 700; font-size: 0.82rem;
+      cursor: pointer; border: none;
     }
 
-    .btn-delete:hover { opacity: 0.75; }
-
-    .card-actions { display: flex; justify-content: center; gap: 0; flex-wrap: wrap; }
+    /* ── Status toast ── */
+    .toast {
+      position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+      background: #2d2d2d; color: #fff; padding: 0.75rem 1.5rem;
+      border-radius: 2rem; font-size: 0.9rem; font-weight: 600;
+      opacity: 0; transition: opacity 0.3s; pointer-events: none; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; }
 
     @media print {
       body { background: #fff; padding: 0; }
-      header, .url-bar, .add-form, .print-btn-wrap, .card-url, .card-actions { display: none; }
+      header, .url-bar, .add-form, .action-bar, .card-url, .card-actions { display: none; }
+      #lock-screen { display: none; }
       .grid { gap: 1rem; }
       .card { box-shadow: none; border: 1px solid #ddd; break-inside: avoid; }
     }
@@ -260,71 +144,122 @@
 </head>
 <body>
 
+  <div id="lock-screen">
+    <div class="lock-card">
+      <h2>Lost&amp;Found+</h2>
+      <p>Nur für Administratoren</p>
+      <input type="password" id="pw-input" placeholder="Passwort" autocomplete="current-password" />
+      <button onclick="checkPassword()">Entsperren</button>
+      <div class="lock-error" id="pw-error"></div>
+    </div>
+  </div>
+
   <header>
     <h1>Lost&amp;Found<span>+</span></h1>
     <p>QR-Code Generator · alle Benutzer auf einen Blick</p>
   </header>
 
   <div class="url-bar">
-    <input type="text" id="baseUrl" placeholder="Basis-URL (z. B. https://deine-seite.de/index.html)" />
-    <button onclick="regenerate()">Aktualisieren</button>
+    <input type="text" id="baseUrl" placeholder="Basis-URL (z. B. https://freedani71.github.io/lost-found/index.html)" />
+    <button onclick="renderCards(currentBaseUrl())">Aktualisieren</button>
   </div>
 
-  <!-- ── Neuen User hinzufügen ── -->
   <div class="add-form">
     <h2>➕ Neuen Benutzer hinzufügen</h2>
     <div class="form-row">
-      <input type="text"   id="f-name"   placeholder="Name (z. B. Sophie)" maxlength="40" />
-      <input type="text"   id="f-klasse" placeholder="Klasse (z. B. 2A)"   maxlength="10" />
+      <input type="text" id="f-name"   placeholder="Name (z. B. Sophie)" maxlength="40" />
+      <input type="text" id="f-klasse" placeholder="Klasse (z. B. 2A)"   maxlength="10" />
     </div>
     <div class="form-row full">
-      <input type="text"   id="f-abgabe" placeholder="Abgabeort (z. B. Schulsekretariat)" maxlength="60" />
+      <input type="text" id="f-abgabe" placeholder="Abgabeort (z. B. Schulsekretariat)" maxlength="60" />
     </div>
     <div class="form-row">
-      <input type="text"   id="f-id"     placeholder="ID (leer = automatisch)" maxlength="10" />
+      <input type="text" id="f-id"     placeholder="ID (leer = automatisch)" maxlength="10" />
     </div>
     <div class="form-actions">
-      <button class="btn-add"   onclick="addUser()">Benutzer hinzufügen &amp; QR erstellen</button>
-      <button class="btn-clear" onclick="clearAll()">Alle löschen</button>
+      <button class="btn-add"       onclick="addUser()">Benutzer hinzufügen &amp; QR erstellen</button>
+      <button class="btn-secondary" onclick="clearAll()">Alle löschen</button>
     </div>
     <div class="form-error" id="form-error"></div>
   </div>
 
-  <div class="print-btn-wrap">
+  <div class="action-bar">
     <button class="btn-print" onclick="window.print()">🖨️ Alle drucken</button>
   </div>
 
   <div class="grid" id="grid"></div>
+  <div class="toast" id="toast"></div>
 
   <script>
-    // ── Datenbank (wird im localStorage gespeichert) ─────────────────
-    const DEFAULTS = {
-      "123": { name: "Lucas", klasse: "2B", abgabe: "Schulsekretariat"  },
-      "124": { name: "Janis", klasse: "3A", abgabe: "Fundkiste Eingang" },
-      "125": { name: "Emma",  klasse: "1C", abgabe: "Lehrerzimmer"      },
-    };
-
-    function loadDB() {
-      try {
-        const saved = localStorage.getItem("laf_database");
-        return saved ? JSON.parse(saved) : { ...DEFAULTS };
-      } catch { return { ...DEFAULTS }; }
-    }
-
-    function saveDB() {
-      localStorage.setItem("laf_database", JSON.stringify(database));
-    }
-
-    let database = loadDB();
+    // ── Supabase Konfiguration ───────────────────────────────────────
+    const SUPABASE_URL = "https://gmhvprgzxdxjrrakabqx.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdtaHZwcmd6eGR4anJyYWthYnF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwNzkzMDQsImV4cCI6MjA4ODY1NTMwNH0.YXdgkIXE64k_WS-41JBmplpOA3P1abZJqYcvElb6zlc";
     // ────────────────────────────────────────────────────────────────
 
-    function guessBaseUrl() {
-      const loc = window.location.href.replace("qr-generator.html", "index.html");
-      return loc.split("?")[0];
+    const HEADERS = {
+      "apikey":        SUPABASE_KEY,
+      "Authorization": `Bearer ${SUPABASE_KEY}`,
+      "Content-Type":  "application/json",
+      "Prefer":        "return=minimal",
+    };
+
+    async function dbGetAll() {
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/users?select=*`, { headers: HEADERS });
+      return r.json();
+    }
+    async function dbInsert(id, name, klasse, abgabe) {
+      await fetch(`${SUPABASE_URL}/rest/v1/users`, {
+        method: "POST", headers: HEADERS,
+        body: JSON.stringify({ id, name, klasse, abgabe }),
+      });
+    }
+    async function dbDelete(id) {
+      await fetch(`${SUPABASE_URL}/rest/v1/users?id=eq.${id}`, {
+        method: "DELETE", headers: HEADERS,
+      });
     }
 
+    // ── Passwortschutz ───────────────────────────────────────────────
+    const PASSWORD = "schule2025";
+
+    window.checkPassword = function() {
+      const input = document.getElementById("pw-input");
+      if (input.value === PASSWORD) {
+        sessionStorage.setItem("laf_auth", "1");
+        document.getElementById("lock-screen").style.display = "none";
+        loadAndRender();
+      } else {
+        document.getElementById("pw-error").textContent = "Falsches Passwort.";
+        input.classList.remove("shake");
+        void input.offsetWidth;
+        input.classList.add("shake");
+        input.value = "";
+        input.focus();
+      }
+    };
+
+    document.getElementById("pw-input").addEventListener("keydown", e => {
+      if (e.key === "Enter") window.checkPassword();
+    });
+
+    if (sessionStorage.getItem("laf_auth") === "1") {
+      document.getElementById("lock-screen").style.display = "none";
+      loadAndRender();
+    }
+    // ────────────────────────────────────────────────────────────────
+
+    let database = {};
+
+    function guessBaseUrl() {
+      return "https://freedani71.github.io/lost-found/index.html";
+    }
+
+    window.currentBaseUrl = function() {
+      return document.getElementById("baseUrl").value.trim() || guessBaseUrl();
+    };
+
     function buildUrl(baseUrl, id) {
-      return `${baseUrl.trim().replace(/\?.*$/, "")}?user=${id}`;
+      return `${baseUrl.replace(/\?.*$/, "")}?user=${id}`;
     }
 
     function nextId() {
@@ -332,11 +267,26 @@
       return String(ids.length ? Math.max(...ids) + 1 : 100);
     }
 
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 2500);
+    }
+
     function setError(msg) {
       document.getElementById("form-error").textContent = msg;
     }
 
-    function addUser() {
+    async function loadAndRender() {
+      document.getElementById("baseUrl").value = guessBaseUrl();
+      const rows = await dbGetAll();
+      database = {};
+      rows.forEach(r => { database[r.id] = { name: r.name, klasse: r.klasse, abgabe: r.abgabe }; });
+      renderCards(currentBaseUrl());
+    }
+
+    window.addUser = async function() {
       const name   = document.getElementById("f-name").value.trim();
       const klasse = document.getElementById("f-klasse").value.trim();
       const abgabe = document.getElementById("f-abgabe").value.trim();
@@ -347,63 +297,49 @@
       if (!abgabe) return setError("Bitte einen Abgabeort eingeben.");
 
       id = id || nextId();
-
       if (database[id]) return setError(`ID „${id}" ist bereits vergeben.`);
 
       setError("");
+      await dbInsert(id, name, klasse, abgabe);
       database[id] = { name, klasse, abgabe };
-      saveDB();
-
-      // Clear inputs
       ["f-name","f-klasse","f-abgabe","f-id"].forEach(i =>
         document.getElementById(i).value = ""
       );
+      renderCards(currentBaseUrl());
+      showToast(`✅ ${name} gespeichert`);
+      setTimeout(() =>
+        document.getElementById(`card-${id}`)?.scrollIntoView({ behavior: "smooth", block: "center" })
+      , 100);
+    };
 
-      renderCards(document.getElementById("baseUrl").value || guessBaseUrl());
-
-      // Scroll new card into view
-      setTimeout(() => {
-        document.getElementById(`card-${id}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
-      }, 100);
-    }
-
-    function deleteUser(id) {
-      if (!confirm(`Benutzer „${database[id]?.name}" (ID ${id}) wirklich löschen?`)) return;
+    window.deleteUser = async function(id) {
+      if (!confirm(`Benutzer „${database[id]?.name}" wirklich löschen?`)) return;
+      await dbDelete(id);
       delete database[id];
-      saveDB();
-      renderCards(document.getElementById("baseUrl").value || guessBaseUrl());
-    }
+      renderCards(currentBaseUrl());
+      showToast("🗑 Benutzer gelöscht");
+    };
 
-    function clearAll() {
-      if (!confirm("Alle Benutzer löschen und Standarddaten wiederherstellen?")) return;
-      database = { ...DEFAULTS };
-      saveDB();
-      renderCards(document.getElementById("baseUrl").value || guessBaseUrl());
-    }
+    window.clearAll = async function() {
+      if (!confirm("Wirklich alle Benutzer löschen?")) return;
+      await Promise.all(Object.keys(database).map(id => dbDelete(id)));
+      database = {};
+      renderCards(currentBaseUrl());
+      showToast("🗑 Alle gelöscht");
+    };
 
-    function downloadQR(canvasOrImg, filename) {
-      const dataUrl = canvasOrImg.tagName === "CANVAS"
-        ? canvasOrImg.toDataURL("image/png")
-        : canvasOrImg.src;
+    function downloadQR(el, filename) {
+      const dataUrl = el.tagName === "CANVAS" ? el.toDataURL("image/png") : el.src;
       const a = document.createElement("a");
-      a.href = dataUrl;
-      a.download = filename;
-      a.click();
+      a.href = dataUrl; a.download = filename; a.click();
     }
 
-    function regenerate() {
-      const baseUrl = document.getElementById("baseUrl").value || guessBaseUrl();
-      document.getElementById("baseUrl").value = baseUrl;
-      renderCards(baseUrl);
-    }
-
-    function renderCards(baseUrl) {
+    window.renderCards = function(baseUrl) {
       const grid = document.getElementById("grid");
       grid.innerHTML = "";
 
       Object.entries(database).forEach(([id, user]) => {
-        const url = buildUrl(baseUrl, id);
-
+        const url  = buildUrl(baseUrl, id);
         const card = document.createElement("div");
         card.className = "card";
         card.id = `card-${id}`;
@@ -415,38 +351,29 @@
           <div class="card-actions">
             <button class="btn-dl"     id="dl-${id}">⬇ PNG</button>
             <button class="btn-delete" id="del-${id}">🗑</button>
-          </div>
-        `;
+          </div>`;
         grid.appendChild(card);
 
         new QRCode(document.getElementById(`qr-${id}`), {
-          text: url,
-          width: 160,
-          height: 160,
-          colorDark: "#2d2d2d",
-          colorLight: "#ffffff",
+          text: url, width: 160, height: 160,
+          colorDark: "#2d2d2d", colorLight: "#ffffff",
           correctLevel: QRCode.CorrectLevel.M,
         });
 
         document.getElementById(`dl-${id}`).addEventListener("click", () => {
           const el = document.getElementById(`qr-${id}`).querySelector("canvas,img");
-          downloadQR(el, `qr-${user.name.toLowerCase()}-${id}.png`);
+          downloadQR(el, `qr-${id}.png`);
         });
-
-        document.getElementById(`del-${id}`).addEventListener("click", () => deleteUser(id));
+        document.getElementById(`del-${id}`).addEventListener("click", () => window.deleteUser(id));
       });
-    }
+    };
 
-    // Eingabe mit Enter bestätigen
+    // Enter-Taste im Formular
     ["f-name","f-klasse","f-abgabe","f-id"].forEach(id => {
       document.getElementById(id).addEventListener("keydown", e => {
-        if (e.key === "Enter") addUser();
+        if (e.key === "Enter") window.addUser();
       });
     });
-
-    // Init
-    document.getElementById("baseUrl").value = guessBaseUrl();
-    renderCards(guessBaseUrl());
   </script>
 </body>
 </html>
