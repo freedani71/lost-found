@@ -174,8 +174,20 @@
       <input type="text" id="f-abgabe" placeholder="Abgabeort (z. B. Schulsekretariat)" maxlength="60" />
     </div>
     <div class="form-row">
-      <input type="text" id="f-schule" placeholder="Schule (z. B. Kantonsschule Zug)" maxlength="60" />
-      <input type="text" id="f-id"     placeholder="ID (leer = automatisch)" maxlength="10" />
+      <select id="f-schule" style="width:100%; padding:0.65rem 0.9rem; border-radius:0.65rem; border:none; font-size:0.88rem; outline:none; background:rgba(255,255,255,0.92); color:#2d2d2d;">
+        <option value="">Schule wählen…</option>
+      </select>
+      <input type="text" id="f-id" placeholder="ID (leer = automatisch)" maxlength="10" />
+    </div>
+    <div class="form-row full" id="neue-schule-row" style="display:none;">
+      <div style="display:flex; gap:0.5rem;">
+        <input type="text" id="f-neue-schule" placeholder="Name der neuen Schule" maxlength="80" style="flex:1;" />
+        <button type="button" onclick="saveNewSchule()" style="padding:0.65rem 1rem; border-radius:0.65rem; border:none; background:#fff; color:#667eea; font-weight:800; font-size:0.88rem; cursor:pointer; white-space:nowrap;">Speichern</button>
+        <button type="button" onclick="toggleNeueSchule(false)" style="padding:0.65rem 0.8rem; border-radius:0.65rem; border:none; background:rgba(255,255,255,0.2); color:#fff; font-weight:700; font-size:0.88rem; cursor:pointer;">✕</button>
+      </div>
+    </div>
+    <div style="margin-top:0.4rem;">
+      <button type="button" onclick="toggleNeueSchule(true)" style="background:none; border:none; color:rgba(255,255,255,0.75); font-size:0.82rem; cursor:pointer; text-decoration:underline;">+ Neue Schule hinzufügen</button>
     </div>
     <div class="form-actions">
       <button class="btn-add"       onclick="addUser()">Benutzer hinzufügen &amp; QR erstellen</button>
@@ -207,6 +219,16 @@
     async function dbGetAll() {
       const r = await fetch(`${SUPABASE_URL}/rest/v1/users?select=*`, { headers: HEADERS });
       return r.json();
+    }
+    async function dbGetSchulen() {
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/schulen?select=name&order=name`, { headers: HEADERS });
+      return r.json();
+    }
+    async function dbInsertSchule(name) {
+      await fetch(`${SUPABASE_URL}/rest/v1/schulen`, {
+        method: "POST", headers: HEADERS,
+        body: JSON.stringify({ name }),
+      });
     }
     async function dbInsert(id, name, klasse, abgabe, schule) {
       await fetch(`${SUPABASE_URL}/rest/v1/users`, {
@@ -279,9 +301,38 @@
       document.getElementById("form-error").textContent = msg;
     }
 
+    async function loadSchulenDropdown() {
+      const schulen = await dbGetSchulen();
+      const sel = document.getElementById("f-schule");
+      const current = sel.value;
+      sel.innerHTML = '<option value="">Schule wählen…</option>';
+      schulen.forEach(s => {
+        const opt = document.createElement("option");
+        opt.value = s.name; opt.textContent = s.name;
+        sel.appendChild(opt);
+      });
+      if (current) sel.value = current;
+    }
+
+    window.toggleNeueSchule = function(show) {
+      document.getElementById("neue-schule-row").style.display = show ? "block" : "none";
+      if (show) document.getElementById("f-neue-schule").focus();
+    };
+
+    window.saveNewSchule = async function() {
+      const name = document.getElementById("f-neue-schule").value.trim();
+      if (!name) return;
+      await dbInsertSchule(name);
+      await loadSchulenDropdown();
+      document.getElementById("f-schule").value = name;
+      document.getElementById("f-neue-schule").value = "";
+      toggleNeueSchule(false);
+      showToast(`✅ Schule „${name}" gespeichert`);
+    };
+
     async function loadAndRender() {
       document.getElementById("baseUrl").value = guessBaseUrl();
-      const rows = await dbGetAll();
+      const [rows] = await Promise.all([dbGetAll(), loadSchulenDropdown()]);
       database = {};
       rows.forEach(r => { database[r.id] = { name: r.name, klasse: r.klasse, abgabe: r.abgabe, schule: r.schule || "" }; });
       renderCards(currentBaseUrl());
@@ -372,10 +423,13 @@
     };
 
     // Enter-Taste im Formular
-    ["f-name","f-klasse","f-abgabe","f-schule","f-id"].forEach(id => {
+    ["f-name","f-klasse","f-abgabe","f-id"].forEach(id => {
       document.getElementById(id).addEventListener("keydown", e => {
         if (e.key === "Enter") window.addUser();
       });
+    });
+    document.getElementById("f-neue-schule").addEventListener("keydown", e => {
+      if (e.key === "Enter") window.saveNewSchule();
     });
   </script>
 </body>
