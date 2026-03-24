@@ -119,6 +119,7 @@
       <select id="filter-schule" onchange="renderTable()">
         <option value="">Alle Schulen</option>
       </select>
+      <span id="schule-badge" style="display:none; background:rgba(255,255,255,0.25); color:#fff; padding:0.4rem 0.9rem; border-radius:2rem; font-size:0.88rem; font-weight:700;" id="schule-label-wrap">🏫 <span id="schule-label"></span></span>
       <input type="text" id="filter-search" placeholder="Name oder ID suchen…" oninput="renderTable()" />
       <span class="count-badge" id="count-badge">0 Einträge</span>
     </div>
@@ -147,6 +148,7 @@
     const PASSWORD = "schule2025";
 
     let allRows = [];
+    const urlSchule = new URLSearchParams(window.location.search).get("schule");
 
     window.checkPassword = function() {
       const input = document.getElementById("pw-input");
@@ -182,14 +184,22 @@
       document.getElementById("loading").style.display = "none";
       document.getElementById("main").style.display = "block";
 
-      // Schulen-Dropdown befüllen
+      // Schulen-Dropdown befüllen oder sperren
       const schulen = [...new Set(allRows.map(r => r.schule || "").filter(Boolean))].sort();
       const sel = document.getElementById("filter-schule");
-      schulen.forEach(s => {
-        const opt = document.createElement("option");
-        opt.value = s; opt.textContent = s;
-        sel.appendChild(opt);
-      });
+
+      if (urlSchule) {
+        // Nur diese Schule anzeigen, Dropdown verstecken
+        sel.parentElement.style.display = "none";
+        document.getElementById("schule-label").textContent = urlSchule;
+        document.getElementById("schule-badge").style.display = "inline-block";
+      } else {
+        schulen.forEach(s => {
+          const opt = document.createElement("option");
+          opt.value = s; opt.textContent = s;
+          sel.appendChild(opt);
+        });
+      }
 
       renderTable();
     }
@@ -198,8 +208,9 @@
       const filterSchule = document.getElementById("filter-schule").value;
       const filterSearch = document.getElementById("filter-search").value.toLowerCase();
 
+      const activeSchule = urlSchule || filterSchule;
       const filtered = allRows.filter(r => {
-        if (filterSchule && (r.schule || "") !== filterSchule) return false;
+        if (activeSchule && (r.schule || "") !== activeSchule) return false;
         if (filterSearch && !r.name.toLowerCase().includes(filterSearch) && !String(r.id).includes(filterSearch)) return false;
         return true;
       });
